@@ -98,7 +98,13 @@ void raycast_kernel(const pos3r &pos, const matrix4r &view)
 	const float tnear = fmaxf(largest_tmin, config_pm.raycast.near_plane);
 	const float tfar = fminf(smallest_tmax, config_pm.raycast.far_plane);
 
-
+	if (tnear < tfar) {
+		// first walk with largesteps until we found a hit
+		float t = tnear;
+		float stepsize = config_pm.raycast.large_step;
+		//float f_t = volume.interp(origin + direction * t);
+		float f_tt = 0;
+	}
 
 }
 

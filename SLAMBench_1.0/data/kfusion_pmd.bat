@@ -1,5 +1,6 @@
 mkdir output
 mkdir output\pose
+mkdir output\config
 mkdir output\tsdf
 mkdir output\vert_norm
 mkdir output\render_depth

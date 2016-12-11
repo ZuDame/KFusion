@@ -1,4 +1,5 @@
 mkdir output
+mkdir output\config
 mkdir output\pose
 mkdir output\tsdf
 mkdir output\vert_norm

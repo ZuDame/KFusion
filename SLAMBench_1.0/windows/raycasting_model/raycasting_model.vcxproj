@@ -146,9 +146,11 @@
     <ClCompile Include="..\..\kfusion\src\kf_helper.cpp" />
     <ClCompile Include="..\..\model\raycast.cpp" />
     <ClCompile Include="..\..\model\raycast_main.cpp" />
+    <ClCompile Include="..\..\model\raycast_math.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\..\model\raycast.h" />
+    <ClInclude Include="..\..\model\raycast_math.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

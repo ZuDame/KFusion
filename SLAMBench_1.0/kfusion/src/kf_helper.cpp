@@ -20,6 +20,46 @@ std::string tsdf_dat(const unsigned &frame)
 	return file_name;
 }
 
+std::string config_filename()
+{
+	std::string file_name = output_folder;
+	file_name.append(config_folder);	
+	file_name.append(".dat");
+
+	return file_name;
+}
+
+
+void save_config(config_param &config_pm)
+{
+	std::string config_filenm = config_filename();
+
+	FILE* config_file = NULL;
+
+	config_file = fopen(config_filenm.c_str(),"wb");
+
+	if (config_file)
+	{
+		fwrite(&config_pm, sizeof(config_pm), 1, config_file);
+		fclose(config_file);
+	}
+}
+
+void load_config(config_param &config_pm)
+{
+	std::string config_filenm = config_filename();
+
+	FILE* config_file = NULL;
+
+	config_file = fopen(config_filenm.c_str(), "rb");
+
+	if (config_file)
+	{
+		fread(&config_pm, sizeof(config_pm), 1, config_file);
+		fclose(config_file);
+	}
+}
+
 void load_tsdf(const unsigned &frame, uint16_t* p_tsdf, unsigned &vol_size)
 {
 	std::string tsdf_filename = tsdf_dat(frame);
@@ -104,6 +144,24 @@ void save_vertex_normal(const unsigned &frame, float* p_vertex, float* p_normal,
 	}
 }
 
+void load_vertex_normal(const unsigned &frame, float* p_vertex, float* p_normal, const unsigned &pixels_)
+{
+	std::string vert_norm_filename = vert_norm_dat(frame);
+
+	FILE* vert_norm_file = NULL;
+
+	vert_norm_file = fopen(vert_norm_filename.c_str(), "rb");
+	size_t byte_count = 3 * sizeof(float)*pixels_;
+
+
+	if (vert_norm_file)
+	{
+		fread(p_vertex, 1, byte_count, vert_norm_file);
+		fread(p_normal, 1, byte_count, vert_norm_file);
+		fclose(vert_norm_file);
+	}
+}
+
 std::string pose_dat(const unsigned &frame,bool prior)
 {
 	std::string file_name = output_folder;
@@ -133,6 +191,26 @@ void save_pose(const unsigned &frame, float* pose[4], bool prior)
 		fclose(h_pose);
 	}
 }
+
+void load_pose(const unsigned &frame, float* pose[4], bool prior)
+{
+	std::string pose_file = pose_dat(frame, prior);
+
+	FILE* h_pose = NULL;
+
+	h_pose = fopen(pose_file.c_str(), "rb");
+
+	if (h_pose)
+	{
+		fread(pose[0], sizeof(float), 4, h_pose);
+		fread(pose[1], sizeof(float), 4, h_pose);
+		fread(pose[2], sizeof(float), 4, h_pose);
+		fread(pose[3], sizeof(float), 4, h_pose);
+
+		fclose(h_pose);
+	}
+}
+
 std::string depth_render_bmp(const unsigned &frame)
 {
 	std::string file_name = output_folder;

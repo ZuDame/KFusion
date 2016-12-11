@@ -142,6 +142,26 @@ int main(int argc, char **argv) {
 	float* p_normal = (float*)normal; 
 	const unsigned pixels = computationSize.x * computationSize.y;
 
+	config_param config_pm;
+	config_pm.width = computationSize.x;
+	config_pm.height = computationSize.y;
+	config_pm.vol_size = volume.size.x;
+	config_pm.vol_size_metric = config.volume_size.x;
+	config_pm.raycast.large_step = config.mu;
+	
+	kfusion.get_raycast_config(
+		config_pm.raycast.near_plane,
+		config_pm.raycast.far_plane,
+		config_pm.raycast.step,
+		config_pm.raycast.large_step);
+
+	config_pm.camera.fx = camera.x;
+	config_pm.camera.fy = camera.y;
+	config_pm.camera.ox = camera.z;
+	config_pm.camera.oy = camera.w;
+
+	save_config(config_pm);
+
 	while (reader->readNextDepthFrame(inputDepth)) {
 
 		Matrix4 pose = kfusion.getPose();

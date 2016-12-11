@@ -24,9 +24,15 @@
     <ClCompile Include="..\..\kfusion\src\kf_helper.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="..\..\model\raycast_math.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\..\model\raycast.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\model\raycast_math.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

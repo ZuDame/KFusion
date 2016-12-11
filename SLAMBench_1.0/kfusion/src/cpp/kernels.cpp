@@ -1092,6 +1092,14 @@ void Kfusion::dumpVolume(std::string filename) {
   fDumpFile.close();
 }
 
+void Kfusion::get_raycast_config(float &near_plane, float &far_plane, float &step_, float &large_step)
+{
+	near_plane = nearPlane;
+	far_plane = farPlane;
+	step_ = step;	
+	large_step *= 0.75f;
+}
+
 void Kfusion::renderVolume(uchar4 *out, uint2 outputSize, int frame,
                            int raycast_rendering_rate, float4 k,
                            float largestep) {

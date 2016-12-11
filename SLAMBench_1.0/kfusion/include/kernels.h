@@ -105,6 +105,8 @@ public:
   Kfusion(uint2 inputSize, uint3 volumeResolution, float3 volumeDimensions,
           Matrix4 initPose, std::vector<int> &pyramid);
 
+  void get_raycast_config(float &near_plane, float &far_plane, float &step, float &large_step);
+
   void languageSpecificConstructor();
   ~Kfusion();
 
@@ -154,5 +156,6 @@ public:
 };
 
 void synchroniseDevices(); // Synchronise CPU and GPU
+
 
 #endif

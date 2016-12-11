@@ -20,6 +20,46 @@ std::string tsdf_dat(const unsigned &frame)
 	return file_name;
 }
 
+void load_tsdf(const unsigned &frame, uint16_t* p_tsdf, unsigned &vol_size)
+{
+	std::string tsdf_filename = tsdf_dat(frame);
+
+	FILE* tsdf_file = NULL;
+
+	tsdf_file = fopen(tsdf_filename.c_str(), "rb");
+	vol_size = 0;
+	const static size_t v128 = 8388608;
+	const static size_t v256 = 67108864;
+	const static size_t v512 = 536870912;
+
+	if (tsdf_file)
+	{
+		fseek(tsdf_file, 0, SEEK_END);
+		size_t file_size = ftell(tsdf_file);
+		fseek(tsdf_file, 0, SEEK_SET);
+
+		fread(p_tsdf, 1, file_size, tsdf_file);
+
+		switch (file_size)
+		{
+		case v128:
+			vol_size = 128;
+			break;
+		case v256:
+			vol_size = 256;
+			break;
+		case v512:
+			vol_size = 512;
+			break;
+		default:
+			vol_size = 0;
+			break;
+		};
+
+		fclose(tsdf_file);
+	}
+}
+
 void save_tsdf(const unsigned &frame, uint16_t* p_tsdf, const unsigned &voxels)
 {
 	std::string tsdf_filename = tsdf_dat(frame);

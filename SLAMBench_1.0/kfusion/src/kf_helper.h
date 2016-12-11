@@ -22,4 +22,6 @@ std::string depth_render_bmp(const unsigned &frame);
 void save_pose(const unsigned &frame, float* pose[4], bool prior);
 void save_tsdf(const unsigned &frame, uint16_t* p_tsdf, const unsigned &voxels);
 void save_vertex_normal(const unsigned &frame, float* p_vertex, float* p_normal,const unsigned &pixels);
+
+void load_tsdf(const unsigned &frame, uint16_t* p_tsdf, unsigned &vol_size);
 #endif

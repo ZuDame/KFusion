@@ -1,0 +1,8 @@
+prefix=/usr/local
+includedir=${prefix}/include
+
+Name: TooN
+Description: Tom's Object-oriented numerics library
+Version: version-3.0.0-beta1
+Libs: -llapack 
+Cflags: -I${includedir}

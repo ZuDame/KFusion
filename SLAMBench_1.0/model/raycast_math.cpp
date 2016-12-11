@@ -106,3 +106,10 @@ void get_direction(float3r &direction, const matrix4r &view, const float3r &pos)
 	direction.x = dir4.x; direction.y = dir4.y; direction.z = dir4.z;
 	//direction = view_(1:3, 1 : 3)*[pos(1) pos(2) 1]';
 }
+
+void linear_step(float3r &y, float x, const float3r &m, const float3r &c)
+{
+	y.x = x * m.x + c.x;
+	y.y = x * m.y + c.y;
+	y.z = x * m.z + c.z;
+}

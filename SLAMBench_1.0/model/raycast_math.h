@@ -87,4 +87,6 @@ void mult3_ew(float3r &c, const float scalar, const float3r &a, const float3r &b
 void sub3_ew(float3r &c, const float3r &a, const float3r &b);
 void minf3(float3r &c, const float3r &a, const float3r &b);
 void maxf3(float3r &c, const float3r &a, const float3r &b);
+
+void linear_step(float3r &y, float x, const float3r &m, const float3r &c);
 #endif

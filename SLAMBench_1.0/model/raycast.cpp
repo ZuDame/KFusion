@@ -71,7 +71,7 @@ void tsdf_u16_to_float()
 void raycast_kernel(const pos3r &pos, const matrix4r &view)
 {
 	float3r origin, direction, posf3(pos), inv_dir, volume_dim(config_pm.vol_size_metric);
-	float3r tbot,ttop,diff, tmin, tmax;
+	float3r tbot,ttop,diff, tmin, tmax,rp;
 
 	get_translation(origin, view);
 	get_direction(direction, view, posf3);
@@ -102,6 +102,7 @@ void raycast_kernel(const pos3r &pos, const matrix4r &view)
 		// first walk with largesteps until we found a hit
 		float t = tnear;
 		float stepsize = config_pm.raycast.large_step;
+		linear_step(rp, t, direction, origin); // rp = origin + direction * t
 		//float f_t = volume.interp(origin + direction * t);
 		float f_tt = 0;
 	}

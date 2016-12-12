@@ -3,16 +3,31 @@
 #include <string.h>
 
 
-typedef struct pos3r {
-	pos3r(unsigned x_, unsigned y_, unsigned z_)
+typedef struct int3r {
+	int3r(unsigned v)
+	{
+		x = v; y = v; z = v;
+	}
+
+	int3r() : x(0),y(0),z(0)
+	{}
+
+	int3r(unsigned x_, unsigned y_, unsigned z_)
 	{
 		x = x_; y = y_; z = z_;
+	}
+
+	int3r(float f_x, float f_y, float f_z)
+	{
+		x = (int)f_x; y = (int)f_y; z = (int)f_z;
 	}
 
 	unsigned x;
 	unsigned y;
 	unsigned z;
-}pos3r;
+}int3r;
+
+typedef int3r pos3r;
 
 typedef struct float3r {
 	float3r()
@@ -87,6 +102,8 @@ void mult3_ew(float3r &c, const float scalar, const float3r &a, const float3r &b
 void sub3_ew(float3r &c, const float3r &a, const float3r &b);
 void minf3(float3r &c, const float3r &a, const float3r &b);
 void maxf3(float3r &c, const float3r &a, const float3r &b);
-
+void max3(int3r &c, const int3r &a, const int3r &b);
+void min3(int3r &c, const int3r &a, const int3r &b);
+void fracf3(float3r &f, const float3r &a);
 void linear_step(float3r &y, float x, const float3r &m, const float3r &c);
 #endif

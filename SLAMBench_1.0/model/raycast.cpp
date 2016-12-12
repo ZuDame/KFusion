@@ -10,13 +10,45 @@ float tsdf[MAX_VOXELS];
 float weight[MAX_VOXELS];
 config_param config_pm;
 matrix4r pose;
+pos3r volume_dim;
+float3r volume_scale;
 
 void tsdf_u16_to_float();
 
+
+inline float T(const unsigned &x, const unsigned &y, const unsigned &z)
+{
+	return tsdf[(x)+(y)*volume_dim.y + (z)*volume_dim.z];
+}
+
+inline void vertex_normal_ref(float3r &v, float3r &n, const unsigned &x, const unsigned &y)
+{
+	const static unsigned stride = config_pm.width;
+	unsigned index = x + y*stride;
+
+	v.x = p_vertex_ref[index].x;
+	v.y = p_vertex_ref[index].y;
+	v.z = p_vertex_ref[index].z;
+
+	n.x = p_normal_ref[index].x;
+	n.y = p_normal_ref[index].y;
+	n.z = p_normal_ref[index].z;
+}
+
+
 void raycast_init(const unsigned &frame)
 {
+	
 	uint16_t* p_tsdf = (uint16_t*)tsdf;
 	load_config(config_pm);
+	volume_dim.x = config_pm.vol_size;
+	volume_dim.y = config_pm.vol_size;
+	volume_dim.z = config_pm.vol_size * volume_dim.y;
+
+	volume_scale.x = (float)config_pm.vol_size / config_pm.vol_size_metric;
+	volume_scale.y = volume_scale.x;
+	volume_scale.z = volume_scale.x;
+
 
 	load_tsdf(frame, p_tsdf, vol_size);
 	tsdf_u16_to_float();
@@ -55,8 +87,8 @@ void tsdf_u16_to_float()
 	float* p_weight = weight;
 
 	const unsigned voxels = vol_size * vol_size * vol_size;
-	uint16_t tf = 0;
-	uint16_t wght = 0;
+	int16_t tf = 0;
+	int16_t wght = 0;
 
 	for (unsigned v = 0; v < voxels; ++v)
 	{
@@ -68,7 +100,44 @@ void tsdf_u16_to_float()
 	}
 }
 
-void raycast_kernel(const pos3r &pos, const matrix4r &view)
+inline float interp(const float3r &pos) {
+	float d = 0.0f;
+	static const int3r vol_max(config_pm.vol_size-1),zero;
+	int3r lower, upper;
+
+	float3r scaled_pos, half(0.5f), factor;
+	mult3_ew(scaled_pos, 1.0f, pos, volume_scale);
+	sub3_ew(scaled_pos, scaled_pos, half);
+
+	int3r base(scaled_pos.x, scaled_pos.y, scaled_pos.z);
+	int3r base_p1;
+	base_p1.x = base.x + 1; base_p1.y = base.y + 1; base_p1.z = base.z + 1;
+
+	fracf3(factor, scaled_pos);
+
+	max3(lower, base, zero);
+	min3(upper, base_p1, vol_max);
+	
+	d = (((T(lower.x, lower.y, lower.z) * (1.0f - factor.x) +
+		T(upper.x, lower.y, lower.z) * factor.x) *
+		(1.0 - factor.y) +
+		(T(lower.x, upper.y, lower.z) * (1.0f - factor.x) +
+			T(upper.x, upper.y, lower.z) * factor.x) *
+		factor.y) *
+		(1.0f - factor.z) +
+		((T(lower.x, lower.y, upper.z) * (1.0f - factor.x) +
+			T(upper.x, lower.y, upper.z) * factor.x) *
+			(1.0f - factor.y) +
+			(T(lower.x, upper.y, upper.z) * (1.0f - factor.x) +
+				T(upper.x, upper.y, upper.z) * factor.x) *
+			factor.y) *
+		factor.z);
+
+	return d;
+}
+
+
+void raycast_kernel(float4r &hit, const pos3r &pos, const matrix4r &view)
 {
 	float3r origin, direction, posf3(pos), inv_dir, volume_dim(config_pm.vol_size_metric);
 	float3r tbot,ttop,diff, tmin, tmax,rp;
@@ -98,13 +167,34 @@ void raycast_kernel(const pos3r &pos, const matrix4r &view)
 	const float tnear = fmaxf(largest_tmin, config_pm.raycast.near_plane);
 	const float tfar = fminf(smallest_tmax, config_pm.raycast.far_plane);
 
+	memset(&hit, 0, sizeof(hit));
+
 	if (tnear < tfar) {
 		// first walk with largesteps until we found a hit
 		float t = tnear;
 		float stepsize = config_pm.raycast.large_step;
 		linear_step(rp, t, direction, origin); // rp = origin + direction * t
-		//float f_t = volume.interp(origin + direction * t);
-		float f_tt = 0;
+		float f_t = interp(rp);
+		float f_tt = 0.0f;
+
+		if (f_t >
+			0.0f) { // ups, if we were already in it, then don't render anything here
+			for (; t < tfar; t += stepsize) {
+				linear_step(rp, t, direction, origin);
+				f_tt = interp(rp);
+				if (f_tt < 0.0f) // got it, jump out of inner loop
+					break;
+				if (f_tt < 0.8f) // coming closer, reduce stepsize
+					stepsize = config_pm.raycast.step;
+				f_t = f_tt;
+			}
+			if (f_tt < 0) { // got it, calculate accurate intersection
+				t = t + stepsize * f_tt / (f_t - f_tt);
+				linear_step(rp, t, direction, origin);
+				hit.x = rp.x; hit.y = rp.y; hit.z = rp.z; hit.w = t;
+				return;
+			}
+		}
 	}
 
 }
@@ -123,17 +213,23 @@ void raycast()
 
 	get_inverse_camera(camera_inv, camera_intrinsic);
 	gemm4x4(view, pose, camera_inv);
+	float4r hit;
+	float3r vert_ref, norm_ref;
 
 	for (unsigned y = 0; y < height; ++y)
 	{
 		for (unsigned x = 0; x < width; ++x)
 		{			
 			pos3r pos(x, y, 1);
+			
+			raycast_kernel(hit,pos,view);
 
-			//view_ = raycastPose * get_inverse_camera_matrix(cam_k);
-			//const float4 hit =
-			//	raycast(integration, pos, view, nearPlane, farPlane, step, largestep);
-			raycast_kernel(pos,view);
+			vertex_normal_ref(vert_ref, norm_ref,x,y);
+
+			if (hit.w > 0.0f)
+			{
+				int ww = 0;
+			}
 		}
 	}
 }

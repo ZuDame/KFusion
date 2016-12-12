@@ -84,6 +84,21 @@ void maxf3(float3r &c, const float3r &a, const float3r &b)
 	c.z = a.z > b.z ? a.z : b.z;
 }
 
+void max3(int3r &c, const int3r &a, const int3r &b)
+{
+	c.x = a.x > b.x ? a.x : b.x;
+	c.y = a.y > b.y ? a.y : b.y;
+	c.z = a.z > b.z ? a.z : b.z;
+}
+
+void min3(int3r &c, const int3r &a, const int3r &b)
+{
+	c.x = a.x < b.x ? a.x : b.x;
+	c.y = a.y < b.y ? a.y : b.y;
+	c.z = a.z < b.z ? a.z : b.z;
+}
+
+
 void sub3_ew(float3r &c, const float3r &a, const float3r &b)
 {
 	c.x = a.x - b.x;
@@ -112,4 +127,13 @@ void linear_step(float3r &y, float x, const float3r &m, const float3r &c)
 	y.x = x * m.x + c.x;
 	y.y = x * m.y + c.y;
 	y.z = x * m.z + c.z;
+}
+
+void fracf3(float3r &f, const float3r &a)
+{
+	int3r i_a(a.x, a.y, a.z);
+
+	f.x = a.x - (float)i_a.x;
+	f.y = a.y - (float)i_a.y;
+	f.z = a.z - (float)i_a.z;
 }

@@ -40,6 +40,11 @@ typedef struct float3r {
 		x = a; y = a; z = a;
 	}
 
+  float3r(float a,float b, float c)
+  {
+    x = a; y = b; z = c;
+  }
+
 	float3r(const pos3r p3r)
 	{
 		x = (float)p3r.x; y = (float)p3r.y; z = (float)p3r.z;
@@ -111,4 +116,6 @@ void add3(int3r &b,const int3r &a, int scalar);
 void copy(float3r &b, const float3r &a);
 
 float normalise(float3r &a);
+
+float error(const float3r &a, const float3r &b);
 #endif

@@ -15,4 +15,12 @@ typedef struct {
 void raycast_init(const unsigned &frame);
 void raycast();
 void raycast_close();
+
+void get_max_error(
+  unsigned &x_v,
+  unsigned &y_v,
+  unsigned &x_n,
+  unsigned &y_n,
+  float &v_err,
+  float &n_err);
 #endif

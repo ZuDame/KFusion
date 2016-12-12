@@ -165,3 +165,12 @@ float normalise(float3r &a)
   
   return mag;
 }
+
+float error(const float3r &a, const float3r &b)
+{
+  float err;
+  float3r d(a.x - b.x, a.y - b.y, a.z - b.z);
+
+  err = d.x*d.x + d.y*d.y + d.z*d.z;
+  return err;
+}

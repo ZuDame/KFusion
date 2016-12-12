@@ -320,6 +320,45 @@ void raycast_kernel(float4r &hit, const pos3r &pos, const matrix4r &view)
 
 }
 
+void get_max_error(
+  unsigned &x_v, 
+  unsigned &y_v,
+  unsigned &x_n,
+  unsigned &y_n,
+  float &v_err, 
+  float &n_err)
+{
+  const unsigned width = config_pm.width;
+  const unsigned height = config_pm.height;
+  unsigned index = 0;
+  float v_e, n_e;
+  v_err = 0.0f;
+  n_err = 0.0f;
+
+  for (unsigned y = 0; y < height; ++y)
+  {
+    for (unsigned x = 0; x < width; ++x)
+    {
+      v_e = error(p_vertex[index], p_vertex_ref[index]);
+      n_e = error(p_normal[index], p_normal_ref[index]);
+
+      if (v_e > v_err)
+      {
+        x_v = x; y_v = y;
+        v_err = v_e;       
+      }
+
+      if (n_e > n_err)
+      {
+        x_n = x; y_n = y;
+        n_err = n_e;
+      }
+
+      index++;
+    }
+  }
+}
+
 void raycast()
 {
   const unsigned width = config_pm.width;
@@ -336,7 +375,7 @@ void raycast()
   gemm4x4(view, pose, camera_inv);
   float4r hit;
   float3r surf_norm, hit3, vert_ref, norm_ref,zero;
-  const float3r invalid(-2.0f);
+  const float3r invalid(-2.0f,0.0f,0.0f);
 
   unsigned index = 0;
   const unsigned stride = config_pm.width;
@@ -351,6 +390,7 @@ void raycast()
       raycast_kernel(hit, pos, view);
       copy(p_vertex[index], zero);
       copy(p_normal[index], invalid);
+      // expected output
       vertex_normal_ref(vert_ref, norm_ref, x, y);
 
       if (hit.w > 0.0f)

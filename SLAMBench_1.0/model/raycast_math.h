@@ -4,7 +4,7 @@
 
 
 typedef struct int3r {
-	int3r(unsigned v)
+	int3r(int v)
 	{
 		x = v; y = v; z = v;
 	}
@@ -12,7 +12,7 @@ typedef struct int3r {
 	int3r() : x(0),y(0),z(0)
 	{}
 
-	int3r(unsigned x_, unsigned y_, unsigned z_)
+	int3r(int x_, int y_, int z_)
 	{
 		x = x_; y = y_; z = z_;
 	}
@@ -22,9 +22,9 @@ typedef struct int3r {
 		x = (int)f_x; y = (int)f_y; z = (int)f_z;
 	}
 
-	unsigned x;
-	unsigned y;
-	unsigned z;
+	int x;
+	int y;
+	int z;
 }int3r;
 
 typedef int3r pos3r;
@@ -106,4 +106,9 @@ void max3(int3r &c, const int3r &a, const int3r &b);
 void min3(int3r &c, const int3r &a, const int3r &b);
 void fracf3(float3r &f, const float3r &a);
 void linear_step(float3r &y, float x, const float3r &m, const float3r &c);
+
+void add3(int3r &b,const int3r &a, int scalar);
+void copy(float3r &b, const float3r &a);
+
+float normalise(float3r &a);
 #endif

@@ -1,5 +1,6 @@
 #include "raycast_math.h"
 #include <string.h>
+#include <math.h>
 
 void get_inverse_camera(matrix4r &camera, const float4r &camera_intrinsic)
 {
@@ -98,6 +99,18 @@ void min3(int3r &c, const int3r &a, const int3r &b)
 	c.z = a.z < b.z ? a.z : b.z;
 }
 
+void copy(float3r &b, const float3r &a)
+{
+  b.x = a.x; b.y = a.y; b.z = a.z;
+}
+
+void add3(int3r &b, const int3r &a, int scalar)
+{
+  b.x = a.x + scalar;
+  b.y = a.y + scalar;
+  b.z = a.z + scalar;
+}
+
 
 void sub3_ew(float3r &c, const float3r &a, const float3r &b)
 {
@@ -136,4 +149,19 @@ void fracf3(float3r &f, const float3r &a)
 	f.x = a.x - (float)i_a.x;
 	f.y = a.y - (float)i_a.y;
 	f.z = a.z - (float)i_a.z;
+}
+
+float normalise(float3r &a)
+{
+  float mag = a.x*a.x + a.y*a.y + a.z*a.z;
+
+  if (mag > 0.0f)
+  {
+    mag = sqrtf(mag);
+    a.x /= mag;
+    a.y /= mag;
+    a.z /= mag;
+  }
+  
+  return mag;
 }

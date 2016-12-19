@@ -51,4 +51,6 @@ void save_vertex_normal(const unsigned &frame, float* p_vertex, float* p_normal,
 void load_pose(const unsigned &frame, float* pose[4], bool prior);
 void load_vertex_normal(const unsigned &frame, float* p_vertex, float* p_normal, const unsigned &pixels);
 void load_tsdf(const unsigned &frame, uint16_t* p_tsdf, unsigned &vol_size);
+
+void get_heatmap_colour(float value, float *red, float *green, float *blue);
 #endif

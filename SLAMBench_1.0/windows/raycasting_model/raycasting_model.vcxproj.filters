@@ -27,12 +27,21 @@
     <ClCompile Include="..\..\model\raycast_math.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="..\..\model\render.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\..\model\raycast.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="..\..\model\raycast_math.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\model\render.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\model\heatmap.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

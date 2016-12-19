@@ -147,10 +147,13 @@
     <ClCompile Include="..\..\model\raycast.cpp" />
     <ClCompile Include="..\..\model\raycast_main.cpp" />
     <ClCompile Include="..\..\model\raycast_math.cpp" />
+    <ClCompile Include="..\..\model\render.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="..\..\model\heatmap.h" />
     <ClInclude Include="..\..\model\raycast.h" />
     <ClInclude Include="..\..\model\raycast_math.h" />
+    <ClInclude Include="..\..\model\render.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

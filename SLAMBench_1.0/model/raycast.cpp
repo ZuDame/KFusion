@@ -1,6 +1,7 @@
 #include "raycast.h"
 #include "kf_helper.h"
 
+
 float3r* p_vertex_ref = NULL;
 float3r* p_normal_ref = NULL;
 float3r* p_vertex = NULL;

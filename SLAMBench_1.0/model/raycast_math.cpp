@@ -112,6 +112,13 @@ void add3(int3r &b, const int3r &a, int scalar)
 }
 
 
+void floor3_ew(float3r &c, const float3r &a)
+{
+  c.x = floorf(a.x);
+  c.y = floorf(a.y);
+  c.z = floorf(a.z);
+}
+
 void sub3_ew(float3r &c, const float3r &a, const float3r &b)
 {
 	c.x = a.x - b.x;

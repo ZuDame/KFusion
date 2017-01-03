@@ -8,7 +8,7 @@ int main() {
   unsigned x_v, x_n, y_v, y_n;
   float v_err, n_err;
 
-	raycast_init(480);
+	raycast_init(20);
   model_top_view();
 	raycast();
   get_max_error(x_v, y_v, x_n, y_n, v_err, n_err);

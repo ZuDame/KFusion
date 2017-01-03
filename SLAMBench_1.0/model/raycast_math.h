@@ -105,6 +105,7 @@ float dot(const float4r &a, const float4r &b);
 
 void mult3_ew(float3r &c, const float scalar, const float3r &a, const float3r &b);
 void sub3_ew(float3r &c, const float3r &a, const float3r &b);
+void floor3_ew(float3r &c, const float3r &a);
 void minf3(float3r &c, const float3r &a, const float3r &b);
 void maxf3(float3r &c, const float3r &a, const float3r &b);
 void max3(int3r &c, const int3r &a, const int3r &b);

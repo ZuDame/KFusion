@@ -106,11 +106,11 @@ inline float interp(const float3r &pos) {
   static const int3r vol_max(config_pm.vol_size - 1), zero;
   int3r lower, upper;
 
-  float3r scaled_pos, half(0.5f), factor;
+  float3r scaled_pos, half(0.5f), factor, scaled_pos_;
   mult3_ew(scaled_pos, 1.0f, pos, volume_scale);
   sub3_ew(scaled_pos, scaled_pos, half);
-
-  int3r base(scaled_pos.x, scaled_pos.y, scaled_pos.z);
+  floor3_ew(scaled_pos_, scaled_pos);
+  int3r base(scaled_pos_.x, scaled_pos_.y, scaled_pos_.z);
   int3r base_p1;
   base_p1.x = base.x + 1; base_p1.y = base.y + 1; base_p1.z = base.z + 1;
 

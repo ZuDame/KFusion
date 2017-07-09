@@ -1,7 +1,7 @@
 #ifndef HEATMAP_H
 #define HEATMAP_H
-
-const static unsigned char  depth_heatmap_lut[5000][3] = {
+#define HEATMAP_COLOURS 5000
+const static unsigned char  depth_heatmap_lut[HEATMAP_COLOURS][3] = {
   { 0x0,0x80,0x80 },
   { 0x0,0x80,0x80 },
   { 0x0,0x80,0x80 },

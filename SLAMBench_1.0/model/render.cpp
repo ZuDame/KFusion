@@ -4,6 +4,7 @@
 #include <vector>
 
 extern float tsdf[];
+extern float weight[];
 extern config_param config_pm;
 extern float3r* p_vertex;
 extern float3r* p_normal;
@@ -60,7 +61,8 @@ void model_top_view_from_vertices()
   unsigned z_offset = 0;
   pixel* p_pixel_z;
   unsigned y_r;
-  uint8_t pix_lut[3], rgb[3];
+  float pix_lut[3];
+  uint8_t rgb[3];
 
   for (unsigned z = 0; z < vol_size; ++z) {
     z_offset = (vol_size - z - 1) * vol_size;
@@ -91,6 +93,140 @@ void model_top_view_from_vertices()
   std::string filename = "top_view_vertices.bmp";
 
   write_bitmap(filename, vol_size, vol_size, sizeof(pixel), (uint8_t *)&top_heat_map[0]);
+}
+
+void tsdf_visualise()
+{
+  const unsigned vol_size = config_pm.vol_size;
+  const unsigned width = vol_size*16;
+  const unsigned height = width;
+  std::vector<pixel> top_heat_map(width*height);
+  pixel* p_pixel_top = &top_heat_map[0];
+  pixel* p_pixel = p_pixel_top;
+
+  float pix_lut[3];
+  uint8_t rgb[3];
+  float* p_tsdf = tsdf;
+  float* p_weight = weight;
+  float wght = 0.0f;
+  float dst = 0.0f;
+  unsigned colour_index = HEATMAP_COLOURS - 1;
+  float f_colour_index = 0.0f;
+  float max_colour = (float)colour_index;
+  //HEATMAP_COLOURS
+  for (unsigned z = 0; z < vol_size; ++z)
+  {
+    p_pixel = p_pixel_top + ((z >> 4) * 256 * width) + (z % 16) * 256;
+    for (unsigned y = 0; y < vol_size; ++y)
+    {
+      for (unsigned x = 0; x < vol_size; ++x)
+      {
+        wght = *p_weight++;
+        dst = *p_tsdf++;
+
+        if (wght > 0.0f)
+        {
+          // dst = 0.0f; orange
+          // dst = -1.0f; green          
+          f_colour_index = 0.5f*(1.0f - dst);
+          f_colour_index *= f_colour_index;
+          f_colour_index *= (float)max_colour;
+          colour_index = (unsigned)f_colour_index;
+          pix_lut[0] = (float)depth_heatmap_lut[colour_index][0];
+          pix_lut[1] = (float)depth_heatmap_lut[colour_index][1];
+          pix_lut[2] = (float)depth_heatmap_lut[colour_index][2];
+
+          if (colour_index) {
+            rgb[0] = pix_lut[0] + (1.4065f * (pix_lut[1] - 128.0f));
+            rgb[1] = pix_lut[0] - (0.3455f * (pix_lut[2] - 128.0f)) - (0.7169f * (pix_lut[1] - 128));
+            rgb[2] = pix_lut[0] + (1.7790f * (pix_lut[2] - 128.0f));
+          }
+          else
+          {
+            rgb[0] = 255;
+            rgb[1] = 255;
+            rgb[2] = 255;
+          }
+          p_pixel[x].r = (uint8_t)(rgb[0]);
+          p_pixel[x].g = (uint8_t)(rgb[1]);
+          p_pixel[x].b = (uint8_t)(rgb[2]);
+        }
+      }
+
+      p_pixel += width;
+    }
+  }
+
+  // output image
+  std::string filename = "tsdf_slice.bmp";
+
+  write_bitmap(filename, width, height, sizeof(pixel), (uint8_t *)&top_heat_map[0]);
+}
+
+void weight_visualise()
+{
+  const unsigned vol_size = config_pm.vol_size;
+  const unsigned width = vol_size * 16;
+  const unsigned height = width;
+  std::vector<pixel> top_heat_map(width*height);
+  pixel* p_pixel_top = &top_heat_map[0];
+  pixel* p_pixel = p_pixel_top;
+
+  float pix_lut[3];
+  uint8_t rgb[3];
+  float* p_tsdf = tsdf;
+  float* p_weight = weight;
+  float wght = 0.0f;
+  float dst = 0.0f;
+  unsigned colour_index = HEATMAP_COLOURS - 1;
+  float f_colour_index = 0.0f;
+  float max_colour = (float)colour_index;
+  //HEATMAP_COLOURS
+  for (unsigned z = 0; z < vol_size; ++z)
+  {
+    p_pixel = p_pixel_top + ((z >> 4) * 256 * width) + (z % 16) * 256;
+    for (unsigned y = 0; y < vol_size; ++y)
+    {
+      for (unsigned x = 0; x < vol_size; ++x)
+      {
+        wght = *p_weight++;
+        dst = *p_tsdf++;
+
+        if (wght > 0.0f)
+        {                   
+          f_colour_index = wght / 100.0f;
+          f_colour_index *= f_colour_index;
+          f_colour_index *= (float)max_colour;
+          colour_index = (unsigned)f_colour_index;
+          pix_lut[0] = (float)depth_heatmap_lut[colour_index][0];
+          pix_lut[1] = (float)depth_heatmap_lut[colour_index][1];
+          pix_lut[2] = (float)depth_heatmap_lut[colour_index][2];
+
+          if (colour_index) {
+            rgb[0] = pix_lut[0] + (1.4065f * (pix_lut[1] - 128.0f));
+            rgb[1] = pix_lut[0] - (0.3455f * (pix_lut[2] - 128.0f)) - (0.7169f * (pix_lut[1] - 128));
+            rgb[2] = pix_lut[0] + (1.7790f * (pix_lut[2] - 128.0f));
+          }
+          else
+          {
+            rgb[0] = 255;
+            rgb[1] = 255;
+            rgb[2] = 255;
+          }
+          p_pixel[x].r = (uint8_t)(rgb[0]);
+          p_pixel[x].g = (uint8_t)(rgb[1]);
+          p_pixel[x].b = (uint8_t)(rgb[2]);
+        }
+      }
+
+      p_pixel += width;
+    }
+  }
+
+  // output image
+  std::string filename = "weight_slice.bmp";
+
+  write_bitmap(filename, width, height, sizeof(pixel), (uint8_t *)&top_heat_map[0]);
 }
 
 void model_top_view()

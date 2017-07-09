@@ -8,10 +8,12 @@ int main() {
   unsigned x_v, x_n, y_v, y_n;
   float v_err, n_err;
 
-	raycast_init(20);  
+	raycast_init(1500);  
 	raycast();
-  model_top_view();
-  model_top_view_from_vertices();
+  tsdf_visualise();
+  weight_visualise();
+  //model_top_view();
+  //model_top_view_from_vertices();
   get_max_error(x_v, y_v, x_n, y_n, v_err, n_err);
 
   printf("vertex (%u,%u): max error %3.5f\n", x_v, y_v, v_err);

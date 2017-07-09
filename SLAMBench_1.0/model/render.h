@@ -10,6 +10,7 @@ typedef struct {
 }pixel;
 
 void model_top_view();
-
+void tsdf_visualise();
+void weight_visualise();
 void model_top_view_from_vertices();
 #endif
